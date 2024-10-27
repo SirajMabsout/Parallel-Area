@@ -55,29 +55,26 @@ int main(int argc, char** argv) {
     // Reduce all local areas to the total area on the root process
     MPI_Reduce(&local_area, &total_area, 1, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
     
-    parallel_time = parallel_end - parallel_start;
     
     if (rank == 0) {
         Pend = MPI_Wtime();
         printf("The total area under the curve is: %f\n", total_area);
-        printf("The time needed for parallel execution :%f\n",Pend-Pstart)
+        printf("The time needed for parallel execution :%f\n",Pend-Pstart);
 
     }
-
-
-
 
     //now time for sequential program
 
         if (rank == 0) {
-        Start = MPI_Wtime();
+        Sstart = MPI_Wtime();
         total_area =  trapezoid_area( a, b, d);
         Send = MPI_Wtime();
         printf("USING SEQUENTIAL APPROACH:\n");
         printf("The total area under the curve is: %f\n", total_area);
         printf("The total time is: %f\n", Send-Sstart);
 
-        printf("The speedUp is: %f\n", serial_time/parallel_time);
+        printf("The speedUp is: %f\n", (Send-Sstart)/(Pend-Pstart));
+        printf("The efficiency is: %f\n",((Send-Sstart)/(Pend-Pstart))/size*100);
     }
     
     MPI_Finalize(); // Finalize MPI
